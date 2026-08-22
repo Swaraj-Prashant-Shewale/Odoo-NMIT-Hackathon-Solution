@@ -1,0 +1,323 @@
+# ===========================================================================
+# Dayflow HRMS
+#
+# Brings up the complete platform with a single command:
+#
+#     docker compose up
+#
+# Then open http://localhost:8000
+#
+# Only two containers publish a port to your machine: the web client (8000)
+# and the API gateway (8080). The nine microservices sit on a private network
+# and are unreachable from outside, exactly as they would be in production.
+# ===========================================================================
+
+# --- Shared definition for every PHP container ------------------------------
+x-php-service: &php-service
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile
+  image: dayflow/php-runtime:8.3
+  restart: unless-stopped
+  networks: [dayflow-internal]
+  depends_on:
+    postgres:
+      condition: service_healthy
+  volumes:
+    - ./server/shared:/var/www/shared:ro
+    - ./storage:/var/www/storage
+    - dayflow-logs:/var/log/dayflow
+
+x-service-env: &service-env
+  APP_ENV: ${APP_ENV:-local}
+  APP_DEBUG: ${APP_DEBUG:-true}
+  APP_TIMEZONE: ${APP_TIMEZONE:-Asia/Kolkata}
+  APP_NAME: ${APP_NAME:-Dayflow}
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_NAME: ${POSTGRES_DB:-dayflow}
+  DB_PASSWORD: ${DAYFLOW_DB_SERVICE_PASSWORD}
+  JWT_SECRET: ${JWT_SECRET}
+  JWT_ISSUER: ${JWT_ISSUER:-dayflow.identity}
+  JWT_AUDIENCE: ${JWT_AUDIENCE:-dayflow.api}
+  INTERNAL_SIGNING_KEY: ${INTERNAL_SIGNING_KEY}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+  REQUIRE_GATEWAY_SIGNATURE: ${REQUIRE_GATEWAY_SIGNATURE:-true}
+  LOG_PATH: /var/log/dayflow
+  STORAGE_PATH: /var/www/storage
+  CURRENCY_CODE: ${CURRENCY_CODE:-INR}
+  CURRENCY_SYMBOL: ${CURRENCY_SYMBOL:-Rs. }
+  # Internal addresses. Services reach each other by container name only.
+  IDENTITY_SERVICE_URL: http://identity-service
+  EMPLOYEE_SERVICE_URL: http://employee-service
+  ATTENDANCE_SERVICE_URL: http://attendance-service
+  LEAVE_SERVICE_URL: http://leave-service
+  PAYROLL_SERVICE_URL: http://payroll-service
+  LEARNING_SERVICE_URL: http://learning-service
+  TALENT_SERVICE_URL: http://talent-service
+  NOTIFICATION_SERVICE_URL: http://notification-service
+  ANALYTICS_SERVICE_URL: http://analytics-service
+
+services:
+  # =========================================================================
+  # Data store
+  # =========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: dayflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-dayflow}
+      POSTGRES_USER: ${POSTGRES_USER:-dayflow_owner}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DAYFLOW_DB_SERVICE_PASSWORD: ${DAYFLOW_DB_SERVICE_PASSWORD}
+      # Scrypt is the strongest password verifier PostgreSQL 16 offers.
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    volumes:
+      - dayflow-db:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      # Exposed so you can inspect the database with a desktop client.
+      # Remove this mapping for a production deployment.
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks: [dayflow-internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dayflow_owner} -d ${POSTGRES_DB:-dayflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+
+  # =========================================================================
+  # Web client - the only thing a person opens in a browser
+  # =========================================================================
+  web:
+    <<: *php-service
+    container_name: dayflow-web
+    environment:
+      <<: *service-env
+      SERVICE_NAME: web-client
+      GATEWAY_URL: http://gateway
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      SESSION_SECURE_COOKIE: ${SESSION_SECURE_COOKIE:-false}
+      SESSION_IDLE_TIMEOUT: ${SESSION_IDLE_TIMEOUT:-1800}
+      SESSION_ABSOLUTE_TIMEOUT: ${SESSION_ABSOLUTE_TIMEOUT:-28800}
+    volumes:
+      - ./client/web:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+    ports:
+      - "${WEB_PORT:-8000}:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      gateway:
+        condition: service_started
+
+  # =========================================================================
+  # API gateway - single entry point to every service
+  # =========================================================================
+  gateway:
+    <<: *php-service
+    container_name: dayflow-gateway
+    environment:
+      <<: *service-env
+      SERVICE_NAME: gateway
+      DB_SCHEMA: platform
+      DB_USER: dayflow_identity
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-600}
+      RATE_LIMIT_PER_ADDRESS_PER_MINUTE: ${RATE_LIMIT_PER_ADDRESS_PER_MINUTE:-3000}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8000}
+    volumes:
+      - ./server/gateway:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+    ports:
+      - "${GATEWAY_PORT:-8080}:80"
+
+  # =========================================================================
+  # Microservices - private network only, no published ports
+  # =========================================================================
+  identity-service:
+    <<: *php-service
+    container_name: dayflow-identity
+    environment:
+      <<: *service-env
+      SERVICE_NAME: identity-service
+      DB_SCHEMA: identity
+      DB_USER: dayflow_identity
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-900}
+      REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL:-604800}
+      REQUIRE_EMAIL_VERIFICATION: ${REQUIRE_EMAIL_VERIFICATION:-false}
+      LOGIN_MAX_ATTEMPTS: ${LOGIN_MAX_ATTEMPTS:-5}
+      LOGIN_LOCKOUT_SECONDS: ${LOGIN_LOCKOUT_SECONDS:-900}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
+      SEED_ADMIN_FIRST_NAME: ${SEED_ADMIN_FIRST_NAME:-Akshat}
+      SEED_ADMIN_LAST_NAME: ${SEED_ADMIN_LAST_NAME:-Panicker}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    volumes:
+      - ./server/services/identity-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  employee-service:
+    <<: *php-service
+    container_name: dayflow-employee
+    environment:
+      <<: *service-env
+      SERVICE_NAME: employee-service
+      DB_SCHEMA: employee
+      DB_USER: dayflow_employee
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-5242880}
+    volumes:
+      - ./server/services/employee-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  attendance-service:
+    <<: *php-service
+    container_name: dayflow-attendance
+    environment:
+      <<: *service-env
+      SERVICE_NAME: attendance-service
+      DB_SCHEMA: attendance
+      DB_USER: dayflow_attendance
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    volumes:
+      - ./server/services/attendance-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  leave-service:
+    <<: *php-service
+    container_name: dayflow-leave
+    environment:
+      <<: *service-env
+      SERVICE_NAME: leave-service
+      DB_SCHEMA: leave_management
+      DB_USER: dayflow_leave
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    volumes:
+      - ./server/services/leave-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  payroll-service:
+    <<: *php-service
+    container_name: dayflow-payroll
+    environment:
+      <<: *service-env
+      SERVICE_NAME: payroll-service
+      DB_SCHEMA: payroll
+      DB_USER: dayflow_payroll
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    volumes:
+      - ./server/services/payroll-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  learning-service:
+    <<: *php-service
+    container_name: dayflow-learning
+    environment:
+      <<: *service-env
+      SERVICE_NAME: learning-service
+      DB_SCHEMA: learning
+      DB_USER: dayflow_learning
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    volumes:
+      - ./server/services/learning-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  talent-service:
+    <<: *php-service
+    container_name: dayflow-talent
+    environment:
+      <<: *service-env
+      SERVICE_NAME: talent-service
+      DB_SCHEMA: talent
+      DB_USER: dayflow_talent
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    volumes:
+      - ./server/services/talent-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  notification-service:
+    <<: *php-service
+    container_name: dayflow-notification
+    environment:
+      <<: *service-env
+      SERVICE_NAME: notification-service
+      DB_SCHEMA: notification
+      DB_USER: dayflow_notification
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+      # This service is the one that writes links into email, so it needs the
+      # address people will actually open rather than the built-in default.
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      MAIL_DRIVER: ${MAIL_DRIVER:-log}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-no-reply@dayflow.local}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Dayflow HR}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+    volumes:
+      - ./server/services/notification-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  analytics-service:
+    <<: *php-service
+    container_name: dayflow-analytics
+    environment:
+      <<: *service-env
+      SERVICE_NAME: analytics-service
+      DB_SCHEMA: analytics
+      DB_USER: dayflow_analytics
+    volumes:
+      - ./server/services/analytics-service:/var/www/html:ro
+      - ./server/shared:/var/www/shared:ro
+      - ./storage:/var/www/storage
+      - dayflow-logs:/var/log/dayflow
+
+  # =========================================================================
+  # Database browser - convenience for development only
+  # =========================================================================
+  adminer:
+    image: adminer:4-standalone
+    container_name: dayflow-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: dracula
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    networks: [dayflow-internal]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles: ["tools"]
+
+networks:
+  dayflow-internal:
+    driver: bridge
+
+volumes:
+  dayflow-db:
+  dayflow-logs:
