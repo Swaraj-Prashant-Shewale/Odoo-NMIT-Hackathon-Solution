@@ -105,6 +105,8 @@ Afterwards it starts in seconds.
 
 Sign in with the administrator email and password you set in step 2.
 
+> Example admin login: `admin@example.com` / `ChangeMe123!`
+
 > The database browser is off by default. Start it with
 > `docker compose --profile tools up -d adminer`.
 
