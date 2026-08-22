@@ -238,12 +238,32 @@ h1, h2, h3, h4, h5, h6 { color: var(--df-ink); font-weight: 600; }
     letter-spacing: .06em;
     text-transform: uppercase;
     padding: .7rem .9rem;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+word-break: break-word;
 }
 
-.table > tbody > tr > td { padding: .7rem .9rem; vertical-align: middle; border-color: var(--df-line); }
+.table > tbody > tr > td {
+    padding: .7rem .9rem;
+    vertical-align: middle;
+    border-color: var(--df-line);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+.table > tbody > tr > td .badge {
+    color: var(--df-ink) !important;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .table > tbody > tr:hover { background: #fafbfe; }
-.table-wrap { overflow-x: auto; }
+.table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
 
 /* --------------------------------------------------------------------------
    Badges, buttons, forms
