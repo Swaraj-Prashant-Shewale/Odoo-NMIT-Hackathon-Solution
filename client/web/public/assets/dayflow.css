@@ -1,0 +1,735 @@
+/* ==========================================================================
+   Dayflow HRMS - application theme
+
+   Layered on top of Bootstrap 5 rather than replacing it. The palette keeps
+   the familiar blue accent of the original interface (#1c77fd) and builds a
+   calmer, denser surface around it suited to a system people look at all day.
+   ========================================================================== */
+
+:root {
+    --df-primary:        #1c77fd;
+    --df-primary-dark:   #0f5ed6;
+    --df-primary-soft:   #e8f1ff;
+    --df-ink:            #16233a;
+    --df-ink-soft:       #5a6a85;
+    --df-line:           #e4e9f2;
+    --df-surface:        #ffffff;
+    --df-canvas:         #f5f7fb;
+    --df-success:        #16a34a;
+    --df-warning:        #d97706;
+    --df-danger:         #dc2626;
+    --df-info:           #0891b2;
+    --df-radius:         12px;
+    --df-radius-sm:      8px;
+    --df-shadow:         0 1px 2px rgba(22, 35, 58, .06), 0 8px 24px rgba(22, 35, 58, .06);
+    --df-shadow-sm:      0 1px 2px rgba(22, 35, 58, .08);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+body {
+    background-color: var(--df-canvas);
+    color: var(--df-ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    font-size: .9375rem;
+    -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; }
+a:hover { text-decoration: none; }
+
+.fa { margin-right: .35rem; }
+.fa:only-child { margin-right: 0; }
+
+h1, h2, h3, h4, h5, h6 { color: var(--df-ink); font-weight: 600; }
+
+.text-muted { color: var(--df-ink-soft) !important; }
+
+/* --------------------------------------------------------------------------
+   Navigation
+   -------------------------------------------------------------------------- */
+
+.main-nav {
+    background: var(--df-surface);
+    border-bottom: 1px solid var(--df-line);
+    box-shadow: var(--df-shadow-sm);
+    padding: .35rem .5rem;
+    z-index: 1030;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--df-primary), #6aa6ff);
+    color: #fff;
+    font-size: .95rem;
+    box-shadow: 0 2px 8px rgba(28, 119, 253, .35);
+}
+
+.brand-mark-lg { width: 46px; height: 46px; font-size: 1.25rem; border-radius: 12px; }
+.brand-mark .fa { margin-right: 0; }
+
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name { font-weight: 700; color: var(--df-ink); letter-spacing: -.01em; }
+.brand-tagline { font-size: .68rem; color: var(--df-ink-soft); text-transform: uppercase; letter-spacing: .08em; }
+
+.main-nav .nav-link {
+    position: relative;
+    color: var(--df-ink-soft);
+    font-size: .84rem;
+    font-weight: 500;
+    padding: .5rem .7rem;
+    border-radius: var(--df-radius-sm);
+    white-space: nowrap;
+    transition: background-color .12s ease, color .12s ease;
+}
+
+.main-nav .nav-link:hover { background: var(--df-canvas); color: var(--df-ink); }
+
+.main-nav .nav-link.active-nav {
+    background: var(--df-primary-soft);
+    color: var(--df-primary-dark);
+    font-weight: 600;
+}
+
+.main-nav .nav-link .fa { width: 1.05rem; text-align: center; }
+
+.nav-badge {
+    display: inline-block;
+    min-width: 18px;
+    padding: 0 5px;
+    margin-left: .3rem;
+    border-radius: 9px;
+    background: var(--df-danger);
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--df-primary-soft);
+    color: var(--df-primary-dark);
+    font-weight: 700;
+    font-size: .78rem;
+    flex: 0 0 auto;
+}
+
+.avatar-sm { width: 28px; height: 28px; font-size: .68rem; }
+.avatar-lg { width: 64px; height: 64px; font-size: 1.35rem; }
+.avatar-xl { width: 92px; height: 92px; font-size: 1.9rem; }
+
+.dropdown-menu { border: 1px solid var(--df-line); border-radius: var(--df-radius); font-size: .875rem; }
+.dropdown-item { padding: .5rem .9rem; }
+.dropdown-item .fa { width: 1.1rem; color: var(--df-ink-soft); }
+
+/* --------------------------------------------------------------------------
+   Page furniture
+   -------------------------------------------------------------------------- */
+
+.page-title { font-size: 1.4rem; font-weight: 650; margin: 0; letter-spacing: -.015em; }
+.page-subtitle { color: var(--df-ink-soft); font-size: .875rem; }
+
+.dayflow-crumbs {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: .8rem;
+}
+
+.dayflow-crumbs .breadcrumb-item a { color: var(--df-ink-soft); }
+.dayflow-crumbs .breadcrumb-item a:hover { color: var(--df-primary); }
+.dayflow-crumbs .breadcrumb-item.active { color: var(--df-ink); font-weight: 500; }
+
+/* --------------------------------------------------------------------------
+   Cards
+   -------------------------------------------------------------------------- */
+
+.card {
+    background: var(--df-surface);
+    border: 1px solid var(--df-line);
+    border-radius: var(--df-radius);
+    box-shadow: var(--df-shadow-sm);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--df-line);
+    font-weight: 600;
+    font-size: .875rem;
+    padding: .85rem 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.card-body { padding: 1.1rem; }
+.card-footer { background: transparent; border-top: 1px solid var(--df-line); padding: .75rem 1.1rem; font-size: .82rem; }
+
+/* Quick-access tiles on the dashboard, in the spirit of the original layout. */
+.tile {
+    display: block;
+    height: 100%;
+    padding: 1.1rem;
+    background: var(--df-surface);
+    border: 1px solid var(--df-line);
+    border-radius: var(--df-radius);
+    box-shadow: var(--df-shadow-sm);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+.tile:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--df-shadow);
+    border-color: #cddcf5;
+}
+
+.tile-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: var(--df-primary-soft);
+    color: var(--df-primary-dark);
+    font-size: 1.05rem;
+    margin-bottom: .75rem;
+}
+
+.tile-icon .fa { margin-right: 0; }
+.tile-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--df-ink-soft); font-weight: 600; }
+.tile-value { font-size: 1.6rem; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; }
+.tile-hint { font-size: .78rem; color: var(--df-ink-soft); }
+
+.tile-success .tile-icon { background: #e7f7ed; color: var(--df-success); }
+.tile-warning .tile-icon { background: #fdf3e3; color: var(--df-warning); }
+.tile-danger  .tile-icon { background: #fdeaea; color: var(--df-danger); }
+.tile-info    .tile-icon { background: #e5f6fa; color: var(--df-info); }
+
+/* --------------------------------------------------------------------------
+   Tables
+   -------------------------------------------------------------------------- */
+
+.table { font-size: .86rem; margin-bottom: 0; }
+
+.table > thead > tr > th {
+    background: #fafbfe;
+    border-bottom: 1px solid var(--df-line);
+    color: var(--df-ink-soft);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .7rem .9rem;
+    white-space: nowrap;
+}
+
+.table > tbody > tr > td { padding: .7rem .9rem; vertical-align: middle; border-color: var(--df-line); }
+.table > tbody > tr:hover { background: #fafbfe; }
+.table-wrap { overflow-x: auto; }
+
+/* --------------------------------------------------------------------------
+   Badges, buttons, forms
+   -------------------------------------------------------------------------- */
+
+.badge { font-weight: 600; font-size: .7rem; padding: .32em .6em; border-radius: 6px; }
+
+.btn { font-size: .84rem; font-weight: 500; border-radius: var(--df-radius-sm); padding: .45rem .9rem; }
+.btn-sm { font-size: .78rem; padding: .3rem .65rem; }
+.btn-lg { font-size: .95rem; padding: .6rem 1.2rem; }
+.btn-primary { background: var(--df-primary); border-color: var(--df-primary); }
+.btn-primary:hover, .btn-primary:focus { background: var(--df-primary-dark); border-color: var(--df-primary-dark); }
+
+.form-label { font-size: .8rem; font-weight: 600; color: var(--df-ink); margin-bottom: .3rem; }
+.form-control, .form-select { font-size: .875rem; border-color: var(--df-line); border-radius: var(--df-radius-sm); padding: .5rem .75rem; }
+.form-control:focus, .form-select:focus { border-color: var(--df-primary); box-shadow: 0 0 0 .2rem rgba(28, 119, 253, .12); }
+.form-text { font-size: .78rem; }
+.input-group-text { background: #fafbfe; border-color: var(--df-line); font-size: .84rem; }
+
+.alert { border: 1px solid transparent; border-radius: var(--df-radius); font-size: .875rem; padding: .8rem 1rem; }
+
+/* --------------------------------------------------------------------------
+   Empty states
+   -------------------------------------------------------------------------- */
+
+.empty-state-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: var(--df-canvas);
+    color: #a9b6cc;
+    font-size: 1.5rem;
+}
+
+.empty-state-icon .fa { margin-right: 0; }
+
+/* --------------------------------------------------------------------------
+   Attendance: punch clock and the weekly strip
+   -------------------------------------------------------------------------- */
+
+.punch-clock { font-variant-numeric: tabular-nums; font-size: 2.4rem; font-weight: 700; letter-spacing: -.03em; }
+.punch-date  { font-size: .82rem; color: var(--df-ink-soft); }
+
+.week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .5rem; }
+
+.week-day {
+    padding: .6rem .35rem;
+    border: 1px solid var(--df-line);
+    border-radius: var(--df-radius-sm);
+    text-align: center;
+    background: var(--df-surface);
+}
+
+.week-day-name  { font-size: .66rem; text-transform: uppercase; letter-spacing: .06em; color: var(--df-ink-soft); font-weight: 700; }
+.week-day-date  { font-size: 1rem; font-weight: 650; line-height: 1.4; }
+.week-day-hours { font-size: .7rem; color: var(--df-ink-soft); }
+.week-day.is-today { border-color: var(--df-primary); box-shadow: 0 0 0 2px rgba(28, 119, 253, .12); }
+
+.week-day.status-present    { background: #f2fbf5; }
+.week-day.status-absent     { background: #fdf2f2; }
+.week-day.status-half_day   { background: #fffaf0; }
+.week-day.status-on_leave   { background: #f0f9ff; }
+.week-day.status-holiday,
+.week-day.status-weekly_off { background: #f7f8fb; color: var(--df-ink-soft); }
+
+/* Month calendar grid, shared by attendance and the leave planner. */
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+
+.cal-cell {
+    min-height: 78px;
+    padding: .4rem;
+    border: 1px solid var(--df-line);
+    border-radius: 6px;
+    background: var(--df-surface);
+    font-size: .74rem;
+}
+
+.cal-cell.is-outside { background: #fafbfe; color: #b6c0d1; }
+.cal-cell.is-today   { border-color: var(--df-primary); }
+.cal-daynum { font-weight: 700; font-size: .8rem; }
+.cal-head   { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--df-ink-soft); text-align: center; padding: .3rem 0; }
+
+.cal-pill {
+    display: block;
+    margin-top: 2px;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: .66rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Progress and meters
+   -------------------------------------------------------------------------- */
+
+.progress { height: 6px; border-radius: 999px; background: var(--df-line); }
+.progress-bar { border-radius: 999px; }
+.progress-lg { height: 10px; }
+
+.meter { display: flex; gap: 3px; }
+.meter span { flex: 1; height: 4px; border-radius: 999px; background: var(--df-line); }
+.meter span.on-0 { background: var(--df-danger); }
+.meter span.on-1 { background: var(--df-warning); }
+.meter span.on-2 { background: #eab308; }
+.meter span.on-3 { background: var(--df-success); }
+.meter span.on-4 { background: var(--df-success); }
+
+/* --------------------------------------------------------------------------
+   Timeline, used by the audit trail and approval history
+   -------------------------------------------------------------------------- */
+
+.timeline { position: relative; padding-left: 1.6rem; }
+.timeline::before { content: ""; position: absolute; left: .42rem; top: .35rem; bottom: .35rem; width: 2px; background: var(--df-line); }
+.timeline-item { position: relative; padding-bottom: 1.1rem; }
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -1.32rem;
+    top: .3rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--df-surface);
+    border: 2px solid var(--df-primary);
+}
+.timeline-item.is-muted::before { border-color: #c6d0e0; }
+
+/* --------------------------------------------------------------------------
+   Learning: video embeds and course cards
+   -------------------------------------------------------------------------- */
+
+.video-frame { position: relative; padding-top: 56.25%; border-radius: var(--df-radius); overflow: hidden; background: #000; }
+.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.course-thumb { position: relative; padding-top: 56.25%; border-radius: var(--df-radius-sm); overflow: hidden; background: var(--df-canvas); }
+.course-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.lesson-row {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .6rem .75rem;
+    border: 1px solid var(--df-line);
+    border-radius: var(--df-radius-sm);
+    margin-bottom: .4rem;
+    background: var(--df-surface);
+}
+
+.lesson-row.is-complete { background: #f2fbf5; border-color: #cbebd7; }
+.lesson-row.is-current  { border-color: var(--df-primary); box-shadow: 0 0 0 2px rgba(28, 119, 253, .1); }
+
+.lesson-index {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--df-canvas);
+    color: var(--df-ink-soft);
+    font-size: .72rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lesson-row.is-complete .lesson-index { background: var(--df-success); color: #fff; }
+
+/* --------------------------------------------------------------------------
+   Org chart
+   -------------------------------------------------------------------------- */
+
+.org-tree, .org-tree ul { list-style: none; margin: 0; padding-left: 1.15rem; }
+.org-tree > li { padding-left: 0; }
+.org-tree li { position: relative; padding: .2rem 0 .2rem 1.1rem; }
+.org-tree li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--df-line);
+}
+.org-tree li:last-child::before { bottom: auto; height: 1.1rem; }
+.org-tree li::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.1rem;
+    width: .85rem;
+    border-top: 1px solid var(--df-line);
+}
+.org-tree > li::before, .org-tree > li::after { display: none; }
+
+.org-node {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .4rem .7rem;
+    border: 1px solid var(--df-line);
+    border-radius: var(--df-radius-sm);
+    background: var(--df-surface);
+}
+
+/* --------------------------------------------------------------------------
+   Sign-in and sign-up
+   -------------------------------------------------------------------------- */
+
+.auth-body { background: var(--df-canvas); }
+.auth-shell { display: flex; min-height: 100vh; }
+
+.auth-aside {
+    flex: 0 0 46%;
+    background: linear-gradient(150deg, #0f2f6b 0%, #1c77fd 58%, #4d95ff 100%);
+    color: #fff;
+    align-items: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-aside::after {
+    content: "";
+    position: absolute;
+    right: -140px;
+    bottom: -160px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .07);
+}
+
+.auth-aside-inner { position: relative; max-width: 460px; }
+.auth-headline { font-size: 1.9rem; font-weight: 700; color: #fff; line-height: 1.25; letter-spacing: -.02em; }
+.auth-lede { color: rgba(255, 255, 255, .82); font-size: .95rem; }
+
+.auth-points li { display: flex; gap: .7rem; align-items: flex-start; margin-bottom: .7rem; font-size: .875rem; color: rgba(255, 255, 255, .9); }
+.auth-points .fa { margin-top: .18rem; color: #bcd6ff; width: 1.1rem; }
+
+.auth-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem; }
+.auth-card-wrap { width: 100%; max-width: 420px; }
+
+.auth-card {
+    background: var(--df-surface);
+    border: 1px solid var(--df-line);
+    border-radius: 16px;
+    box-shadow: var(--df-shadow);
+    padding: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Utilities
+   -------------------------------------------------------------------------- */
+
+.stat-row { display: flex; justify-content: space-between; align-items: baseline; padding: .45rem 0; border-bottom: 1px dashed var(--df-line); font-size: .84rem; }
+.stat-row:last-child { border-bottom: 0; }
+.stat-row .stat-key { color: var(--df-ink-soft); }
+.stat-row .stat-val { font-weight: 600; }
+
+.section-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--df-ink-soft); margin-bottom: .5rem; }
+
+.divider-y { border-left: 1px solid var(--df-line); }
+.cursor-pointer { cursor: pointer; }
+.tabular { font-variant-numeric: tabular-nums; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.nav-tabs { border-bottom: 1px solid var(--df-line); }
+.nav-tabs .nav-link { border: 0; border-bottom: 2px solid transparent; color: var(--df-ink-soft); font-size: .86rem; font-weight: 500; padding: .55rem .9rem; }
+.nav-tabs .nav-link:hover { border-bottom-color: #cddcf5; color: var(--df-ink); }
+.nav-tabs .nav-link.active { border-bottom-color: var(--df-primary); color: var(--df-primary-dark); font-weight: 600; background: transparent; }
+
+@media (max-width: 991.98px) {
+    .main-nav .nav-link { padding: .55rem .4rem; }
+    .page-title { font-size: 1.2rem; }
+    .week-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media print {
+    .main-nav, footer, .btn, .dayflow-crumbs, .no-print { display: none !important; }
+    body { background: #fff; }
+    .card { box-shadow: none; border-color: #ccc; }
+}
+
+/* ==========================================================================
+   Compatibility layer
+
+   The bundled vendor files are Bootstrap 5.0.2 and Font Awesome 5.15.2, but
+   the views were written against Bootstrap 5.3 and Font Awesome 6. A class
+   that does not exist does not fail loudly - it simply does nothing, and the
+   element falls back to whatever it inherits. The status pills were the worst
+   of it: .badge alone is {color:#fff} with no background, so every "State"
+   column rendered white text on a white card.
+
+   Rather than swap the vendor bundles - which would change spacing, focus
+   rings and button behaviour across every screen - the handful of missing
+   declarations are supplied here, in the site's own palette.
+   ========================================================================== */
+
+/* --- Bootstrap 5.1: font weight utility ---------------------------------- */
+
+.fw-semibold { font-weight: 600 !important; }
+
+/* --- Bootstrap 5.3: subtle backgrounds, borders and emphasis text --------
+   Used by badge() in client/web/app/Core/helpers.php and directly in views.
+   The tones are derived from the Dayflow palette rather than copied from
+   Bootstrap, so a status pill sits in the same colour world as the rest of
+   the interface. Every pairing is dark ink on a pale ground, comfortably
+   past the 4.5:1 contrast the smallest of them needs.
+   ------------------------------------------------------------------------- */
+
+:root {
+    --df-primary-subtle:   #e3efff;
+    --df-primary-line:     #b9d6ff;
+    --df-primary-emphasis: #0a3f8f;
+
+    --df-success-subtle:   #dcfce7;
+    --df-success-line:     #a7e8c0;
+    --df-success-emphasis: #0a5c2b;
+
+    --df-warning-subtle:   #fef3c7;
+    --df-warning-line:     #fcd97a;
+    --df-warning-emphasis: #7c4708;
+
+    --df-danger-subtle:    #fee2e2;
+    --df-danger-line:      #fbb4b4;
+    --df-danger-emphasis:  #8a1414;
+
+    --df-info-subtle:      #cffafe;
+    --df-info-line:        #8fe3ef;
+    --df-info-emphasis:    #075a6e;
+
+    --df-secondary-subtle:   #eef1f6;
+    --df-secondary-line:     #d3dae6;
+    --df-secondary-emphasis: #3c4a61;
+
+    --df-light-subtle:     #fcfcfd;
+    --df-dark-subtle:      #ced4da;
+}
+
+.bg-primary-subtle   { background-color: var(--df-primary-subtle)   !important; }
+.bg-secondary-subtle { background-color: var(--df-secondary-subtle) !important; }
+.bg-success-subtle   { background-color: var(--df-success-subtle)   !important; }
+.bg-danger-subtle    { background-color: var(--df-danger-subtle)    !important; }
+.bg-warning-subtle   { background-color: var(--df-warning-subtle)   !important; }
+.bg-info-subtle      { background-color: var(--df-info-subtle)      !important; }
+.bg-light-subtle     { background-color: var(--df-light-subtle)     !important; }
+.bg-dark-subtle      { background-color: var(--df-dark-subtle)      !important; }
+
+.border-primary-subtle   { border-color: var(--df-primary-line)   !important; }
+.border-secondary-subtle { border-color: var(--df-secondary-line) !important; }
+.border-success-subtle   { border-color: var(--df-success-line)   !important; }
+.border-danger-subtle    { border-color: var(--df-danger-line)    !important; }
+.border-warning-subtle   { border-color: var(--df-warning-line)   !important; }
+.border-info-subtle      { border-color: var(--df-info-line)      !important; }
+
+.text-primary-emphasis   { color: var(--df-primary-emphasis)   !important; }
+.text-secondary-emphasis { color: var(--df-secondary-emphasis) !important; }
+.text-success-emphasis   { color: var(--df-success-emphasis)   !important; }
+.text-danger-emphasis    { color: var(--df-danger-emphasis)    !important; }
+.text-warning-emphasis   { color: var(--df-warning-emphasis)   !important; }
+.text-info-emphasis      { color: var(--df-info-emphasis)      !important; }
+
+/* A pill built from the three utilities above must win over .badge's own
+   {color:#fff}, whatever order the sheets happen to load in. */
+.badge.bg-primary-subtle,
+.badge.bg-secondary-subtle,
+.badge.bg-success-subtle,
+.badge.bg-danger-subtle,
+.badge.bg-warning-subtle,
+.badge.bg-info-subtle {
+    font-weight: 600;
+    letter-spacing: .01em;
+}
+
+/* Last line of defence: any badge that ends up with no background at all is
+   still readable rather than invisible. */
+.badge:not([class*="bg-"]) {
+    background-color: var(--df-secondary-subtle);
+    color: var(--df-secondary-emphasis);
+}
+
+/* --- Font Awesome 6 names on the Font Awesome 5 glyph set ----------------
+   The icon names below were renamed in Font Awesome 6. Pointing them at the
+   codepoint their version 5 equivalent already ships is a good deal smaller
+   than shipping a second icon font.
+   ------------------------------------------------------------------------- */
+
+.fa-magnifying-glass:before      { content: "\f002"; }  /* fa-search */
+.fa-circle-info:before           { content: "\f05a"; }  /* fa-info-circle */
+.fa-triangle-exclamation:before  { content: "\f071"; }  /* fa-exclamation-triangle */
+.fa-pen-to-square:before         { content: "\f044"; }  /* fa-edit */
+.fa-clock-rotate-left:before     { content: "\f1da"; }  /* fa-history */
+.fa-chart-column:before          { content: "\f080"; }  /* fa-chart-bar */
+.fa-floppy-disk:before           { content: "\f0c7"; }  /* fa-save */
+.fa-list-check:before            { content: "\f0ae"; }  /* fa-tasks */
+.fa-money-bill-transfer:before   { content: "\f53a"; }  /* fa-money-bill-wave */
+.fa-rotate-right:before          { content: "\f01e"; }  /* fa-redo */
+.fa-plug-circle-exclamation:before { content: "\f1e6"; } /* fa-plug */
+
+/* --- Bootstrap 5.1: opacity utilities ------------------------------------ */
+
+.opacity-0   { opacity: 0    !important; }
+.opacity-25  { opacity: .25  !important; }
+.opacity-50  { opacity: .5   !important; }
+.opacity-75  { opacity: .75  !important; }
+.opacity-100 { opacity: 1    !important; }
+
+/* An unread notification needs its own tint. Pairing bg-primary-subtle with
+   bg-opacity-10 was never going to work: even in real Bootstrap 5.3 a subtle
+   background is a flat colour, not an rgba() the opacity variable can reach
+   into. A named class says what the row means and cannot silently do nothing. */
+.notification-unread {
+    background-color: var(--df-primary-soft);
+    box-shadow: inset 3px 0 0 var(--df-primary);
+}
+
+/* --- Layout hooks the views name but nothing ever styled ----------------- */
+
+.page-header { margin-bottom: 1.5rem; }
+.empty-state { color: var(--df-ink-soft); }
+
+/* ==========================================================================
+   Containment
+
+   Everything below stops real content escaping the box it was drawn in. Each
+   rule is here because a measured value in this database already overflows:
+   a rupee figure with comma grouping, a sixteen-character department name, a
+   twelve-level reporting line.
+   ========================================================================== */
+
+/* .tile is the app's own card, and it was missing the two guards Bootstrap's
+   .card has. Without them a flex child refuses to shrink below its content
+   and number_format's comma grouping offers no break opportunity, so a
+   ₹1,499,400.00 was painted straight through the tile's right border. */
+.tile,
+.stat-row,
+.card-body,
+.card-header,
+.card-footer {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+/* A flex or grid child defaults to min-width:auto, which is its content width
+   — that is what stops .truncate from ever truncating inside a row. */
+.d-flex > *,
+.row > * {
+    min-width: 0;
+}
+
+/* A table cell cannot ellipsise from overflow alone: an auto-layout cell is
+   sized from its max-content, so the column just grows. It needs a width to
+   overflow out of. */
+.cell-truncate {
+    max-width: 0;
+    width: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Identifiers, addresses and file names have no spaces to break at. */
+.break-anywhere,
+td code,
+.text-break-all {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* The month grid keeps seven columns at every width, so on a phone each cell
+   is 44px and every name clips to one letter. A scroll floor keeps the month
+   readable and hands the panning to the wrapper. */
+.cal-scroll { overflow-x: auto; }
+.cal-scroll .cal-grid { min-width: 44rem; }
+
+/* An inline-flex node shrinks to fit, so a deep reporting line crushed the
+   nodes instead of letting the wrapper scroll. Laying the tree out at its
+   natural width gives the scroll something to scroll. */
+.org-tree { width: max-content; min-width: 100%; }
+.org-node { flex: 0 0 auto; max-width: 32rem; }
+.org-node > span:last-child { min-width: 0; }
+
+/* Nothing should ever make the page itself scroll sideways: a wide table or
+   chart scrolls inside its own container. */
+body { overflow-x: hidden; }
