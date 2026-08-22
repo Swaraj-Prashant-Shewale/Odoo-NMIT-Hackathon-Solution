@@ -30,6 +30,10 @@ Think of it as replacing a stack of spreadsheets and a long email chain:
 Everyone sees exactly what their job requires, and nothing more. Every change is
 recorded, permanently, so you can always answer "who changed this, and when?"
 
+To Test the admin version of the site we have an existing admin account created :
+Email : akshatpanicker7@gmail.com
+Password : serina1234
+
 ### What you can actually do with it
 
 | Area | What it does |
