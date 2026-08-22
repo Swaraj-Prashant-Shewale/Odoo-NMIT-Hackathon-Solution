@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# Dayflow HRMS
+# ---------------------------------------------------------------------------
+
+# Secrets. Never commit these.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime state
+storage/uploads/*
+storage/mail/*
+storage/logs/*
+storage/cache/*
+!storage/**/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+vendor/
+node_modules/
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build and test output
+coverage/
+*.cache
+.phpunit.result.cache
